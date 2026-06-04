@@ -1,0 +1,47 @@
+import pandas as pd
+
+# 1. Define Baseline Data for Indian Oil Sardine
+# (You can modify these baseline values to match your exact data metrics)
+baseline_data = {
+    "Quality Parameter": [
+        "Total Lipids (Meat %)", 
+        "Total Lipids (Waste %)", 
+        "EPA Fatty Acid (%)", 
+        "DHA Fatty Acid (%)", 
+        "Moisture Content (%)"
+    ],
+    "Baseline Value": [10.97, 14.10, 15.50, 12.20, 68.50]
+}
+df_baseline = pd.DataFrame(baseline_data)
+
+# 2. Define Your Project's Target/Required Qualities
+required_qualities = {
+    "Quality Parameter": [
+        "Total Lipids (Meat %)", 
+        "Total Lipids (Waste %)", 
+        "EPA Fatty Acid (%)", 
+        "DHA Fatty Acid (%)", 
+        "Moisture Content (%)"
+    ],
+    "Required Value": [12.00, 12.00, 18.00, 15.00, 65.00]
+}
+df_required = pd.DataFrame(required_qualities)
+
+# 3. Merge Datasets for Comparison
+experiment_df = pd.merge(df_baseline, df_required, on="Quality Parameter")
+
+# 4. Perform Gap Analysis Calculation
+experiment_df["Gap (Baseline - Required)"] = experiment_df["Baseline Value"] - experiment_df["Required Value"]
+
+# Determine status based on the calculated gap
+def check_status(gap):
+    if gap >= 0:
+        return "Meets Requirement"
+    else:
+        return "Deficit (Gap to Fill)"
+
+experiment_df["Status"] = experiment_df["Gap (Baseline - Required)"].apply(check_status)
+
+# 5. Output the Results
+print("=== INDIAN OIL SARDINE PROJECT EXPERIMENT: GAP ANALYSIS ===")
+print(experiment_df.to_string(index=False))
